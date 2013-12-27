@@ -6,7 +6,6 @@ module.exports = function(grunt) {
 		typescript: {
 			base: {
 				src: ['**/*.ts'],
-				dest: 'build',
 				options: {
 					module: 'commonjs',
 					target: 'es5',
@@ -25,7 +24,8 @@ module.exports = function(grunt) {
 					nospawn: true
 				}
 			}
-	});
+        }
+	});    
 
 	grunt.loadNpmTasks('grunt-contrib-watch');
     grunt.loadNpmTasks('grunt-typescript');
