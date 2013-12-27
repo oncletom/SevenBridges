@@ -3,42 +3,46 @@
 declare var graphViz;
 
 document.addEventListener('DOMContentLoaded', e => {
-  
+
   console.log('graphViz loaded?', typeof graphViz.updateGraph === "function");
-  
-  var nodes = [{},{},{},{},{},{},{}];
-  graphViz.updateGraph(nodes, [
-    {
-      source: nodes[0],
-      target: nodes[1]
-    },
-    {
-      source: nodes[0],
-      target: nodes[2]
-    },
-    {
-      source: nodes[2],
-      target: nodes[3]
-    },
-    {
-      source: nodes[1],
-      target: nodes[4]
-    },
-    {
-      source: nodes[4],
-      target: nodes[5]
-    },
-    {
-      source: nodes[5],
-      target: nodes[2]
-    }
-  ]);
-  
-  window.addEventListener('message', e => {
-    //graphViz.updateGraph(e.nodes, e.edges);
-    throw 'TODO';
+
+  var nodesByUrl = new Map<string, Object>();
+  var xhr = new XMLHttpRequest();
+  xhr.open('GET', chrome.runtime.getURL('/src/urls.json'));
+  xhr.responseType = 'json';
+  xhr.addEventListener('load', e => {
+      var nodes = [];
+
+      xhr.response.slice(0, 10).forEach(url => {
+          var node = { label: url };
+          nodesByUrl.set(url, node);
+          nodes.push(node);
+
+          chrome.runtime.sendMessage({ action: 'crawl', url: url }, links => {
+              var edges = [];
+              var nodes = [];
+
+              links.forEach(l => {
+                  if (!nodesByUrl.has(l)){
+                      var node = { label: l };
+
+                      nodesByUrl.set(l, node);
+                      nodes.push(node);
+                  }
+
+                  edges.push({
+                      source: nodesByUrl.get(url),
+                      target: nodesByUrl.get(l)
+                  });
+              });
+
+              graphViz.updateGraph(nodes, edges);
+          });
+      });
+
+      graphViz.updateGraph(nodes, []);
   });
-  
-})
+
+});
 
 

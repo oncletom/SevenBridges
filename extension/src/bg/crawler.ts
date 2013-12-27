@@ -1,22 +1,17 @@
 'use strict';
 
 class Crawler{
-    private _queue = [];
-
     constructor(public options:CrawlerOptions){
     }
 
     getLinks(url, callback){
-	var links = [];
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', url, true);
+        xhr.addEventListener('load', e => {
+            var links = [].slice.call(xhr.responseXML.querySelectorAll('a')).map(link => link.href);
+            callback({ links: links });
+        });
 
-	this.queue(url);
-
-	callback(links);
-    }
-
-    queue(url){
-	this._queue.push(url);
+        xhr.send();
     }
 }
-
-export = Crawler;

@@ -2,36 +2,41 @@
 document.addEventListener('DOMContentLoaded', function (e) {
     console.log('graphViz loaded?', typeof graphViz.updateGraph === "function");
 
-    var nodes = [{}, {}, {}, {}, {}, {}, {}];
-    graphViz.updateGraph(nodes, [
-        {
-            source: nodes[0],
-            target: nodes[1]
-        },
-        {
-            source: nodes[0],
-            target: nodes[2]
-        },
-        {
-            source: nodes[2],
-            target: nodes[3]
-        },
-        {
-            source: nodes[1],
-            target: nodes[4]
-        },
-        {
-            source: nodes[4],
-            target: nodes[5]
-        },
-        {
-            source: nodes[5],
-            target: nodes[2]
-        }
-    ]);
+    var nodesByUrl = new Map();
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', chrome.runtime.getURL('/src/urls.json'));
+    xhr.responseType = 'json';
+    xhr.addEventListener('load', function (e) {
+        var nodes = [];
 
-    window.addEventListener('message', function (e) {
-        throw 'TODO';
+        xhr.response.slice(0, 10).forEach(function (url) {
+            var node = { label: url };
+            nodesByUrl.set(url, node);
+            nodes.push(node);
+
+            chrome.runtime.sendMessage({ action: 'crawl', url: url }, function (links) {
+                var edges = [];
+                var nodes = [];
+
+                links.forEach(function (l) {
+                    if (!nodesByUrl.has(l)) {
+                        var node = { label: l };
+
+                        nodesByUrl.set(l, node);
+                        nodes.push(node);
+                    }
+
+                    edges.push({
+                        source: nodesByUrl.get(url),
+                        target: nodesByUrl.get(l)
+                    });
+                });
+
+                graphViz.updateGraph(nodes, edges);
+            });
+        });
+
+        graphViz.updateGraph(nodes, []);
     });
 });
 //# sourceMappingURL=main.js.map

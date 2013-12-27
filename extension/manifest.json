@@ -12,6 +12,7 @@
   "default_locale": "en",
   "background": {
     "scripts": [
+      "src/bg/crawler.js",
       "src/bg/background.js"
     ],
     "persistent": false
