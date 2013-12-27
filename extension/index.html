@@ -8,55 +8,50 @@
                 box-sizing: border-box;
             }
 
-            rect {
-                fill: none;
-                pointer-events: all;
-            }
-
-            .node {
-                fill: #000;
-            }
-
-            /*.node.root{
-                fill: deepskyblue;
-            }
-
-            .node.function{
-                fill: indianred;
-            }
-
-            .node.scope{
-                fill: #4b802a;
-            }*/
-
-
-            .link {
-                stroke: #aaaaaa;
-            }
-            /*
-            .link.variable{
-                stroke: purple;
-            }
-
-            .link.parent-scope{
-                stroke: black;
-            }
-
-            .link.lexical-scope{
-                stroke: orange;
-            }*/
+            #graph-container {
+               top: 0;
+               bottom: 0;
+               left: 0;
+               right: 0;
+               position: absolute;
+             }
         </style>
-
-        <script src="js/lib/d3.v3.js"> </script>
-        <script src="js/ScreenTreeNode.js"> </script>
-        <script src="js/graphViz.js"> </script>
-        <script src="src/bg/crawler.js"> </script>
-        <script src="js/main.js"> </script>
-
-        <title> Seven bridges </title>
+      <title> Seven bridges </title>
     </head>
 
     <body>
+      <div id="graph-container"></div>
 
+      <script src="vendor/sigma.js/sigma.core.js"></script>
+      <script src="vendor/sigma.js/conrad.js"></script>
+      <script src="vendor/sigma.js/utils/sigma.utils.js"></script>
+      <script src="vendor/sigma.js/utils/sigma.polyfills.js"></script>
+      <script src="vendor/sigma.js/sigma.settings.js"></script>
+      <script src="vendor/sigma.js/classes/sigma.classes.dispatcher.js"></script>
+      <script src="vendor/sigma.js/classes/sigma.classes.configurable.js"></script>
+      <script src="vendor/sigma.js/classes/sigma.classes.graph.js"></script>
+      <script src="vendor/sigma.js/classes/sigma.classes.camera.js"></script>
+      <script src="vendor/sigma.js/classes/sigma.classes.quad.js"></script>
+      <script src="vendor/sigma.js/captors/sigma.captors.mouse.js"></script>
+      <script src="vendor/sigma.js/captors/sigma.captors.touch.js"></script>
+      <script src="vendor/sigma.js/renderers/sigma.renderers.canvas.js"></script>
+      <script src="vendor/sigma.js/renderers/sigma.renderers.webgl.js"></script>
+      <script src="vendor/sigma.js/renderers/sigma.renderers.def.js"></script>
+      <script src="vendor/sigma.js/renderers/webgl/sigma.webgl.nodes.def.js"></script>
+      <script src="vendor/sigma.js/renderers/webgl/sigma.webgl.nodes.fast.js"></script>
+      <script src="vendor/sigma.js/renderers/webgl/sigma.webgl.edges.def.js"></script>
+      <script src="vendor/sigma.js/renderers/webgl/sigma.webgl.edges.fast.js"></script>
+      <script src="vendor/sigma.js/renderers/canvas/sigma.canvas.nodes.def.js"></script>
+      <script src="vendor/sigma.js/renderers/canvas/sigma.canvas.edges.def.js"></script>
+      <script src="vendor/sigma.js/renderers/canvas/sigma.canvas.labels.def.js"></script>
+      <script src="vendor/sigma.js/renderers/canvas/sigma.canvas.hovers.def.js"></script>
+      <script src="vendor/sigma.js/middlewares/sigma.middlewares.rescale.js"></script>
+      <script src="vendor/sigma.js/middlewares/sigma.middlewares.copy.js"></script>
+      <script src="vendor/sigma.js/misc/sigma.misc.animation.js"></script>
+      <script src="vendor/sigma.js/misc/sigma.misc.bindEvents.js"></script>
+      <script src="vendor/sigma.js/misc/sigma.misc.drawHovers.js"></script>
+      <script src="vendor/sigma.js/plugins/sigma.layout.forceAtlas2/sigma.layout.forceAtlas2.js"></script>
+      <script src="src/bg/crawler.js"> </script>
+      <script src="js/main.js"> </script>
     </body>
 </html>

@@ -1,63 +1,42 @@
 "use strict";
 
-declare var graphViz;
 declare var Crawler;
-var nodesByUrl = new Map<string, Object>();
 var nodesByDomain = new Map<string, Object>();
 
-document.addEventListener('DOMContentLoaded', e => {
+var g = new sigma({
+    container: 'graph-container'
+});
 
-  console.log('graphViz loaded?', typeof graphViz.updateGraph === "function");
 
-  var xhr = new XMLHttpRequest();
-  xhr.open('GET', chrome.runtime.getURL('/src/urls.json'));
-  xhr.responseType = 'json';
-  xhr.addEventListener('load', e => {
-      var nodes = [];
+var xhr = new XMLHttpRequest();
+xhr.open('GET', chrome.runtime.getURL('/src/urls.json'));
+xhr.responseType = 'json';
+xhr.addEventListener('load', e => {
+  var nodes = [];
 
-      xhr.response.forEach(url => {
-          var node = { label: Crawler.getUrlDomain(url) };
+  xhr.response.slice(0, 30)
+    .map(Crawler.getUrlDomain)
+    .filter((domain, i, a) => a.indexOf(domain, i+1) === -1)
+    .forEach(domain => {
+      var node = {
+          id: domain,
+          label: domain,
+          size: Math.random(),
+          x: 0,
+          y: 0,
+          color: '#666'
+      };
 
-          nodesByUrl.set(url, node);
-          nodesByDomain.set(Crawler.getUrlDomain(url), node);
+      nodesByDomain.set(Crawler.getUrlDomain(url), node);
 
-          nodes.push(node);
+      g.graph.addNode(node);
 
-          chrome.runtime.sendMessage({ action: 'crawl', url: url });
-      });
-
-      graphViz.updateGraph(nodes, []);
+      //chrome.runtime.sendMessage({ action: 'crawl', url: url });
   });
 
-  xhr.send();
 });
 
-chrome.runtime.onMessage.addListener((message, sender) => {
-    if (message.action !== 'links') {
-        return;
-    }
-
-    var links = message.links;
-    var url = message.url;
-    var edges = [];
-    var nodes = [];
-
-    links.forEach(l => {
-        if (!nodesByUrl.has(l)){
-            var node = { label: l };
-
-            nodesByUrl.set(l, node);
-            nodes.push(node);
-        }
-
-        edges.push({
-            source: nodesByUrl.get(url),
-            target: nodesByUrl.get(l)
-        });
-    });
-
-    graphViz.updateGraph(nodes, edges);
-});
+xhr.send();
 
 chrome.runtime.onMessage.addListener((message, sender) => {
     if (message.action !== 'domains') {
@@ -71,19 +50,27 @@ chrome.runtime.onMessage.addListener((message, sender) => {
 
     domains.forEach(d => {
         if (!nodesByDomain.has(d)){
-            var node = { label: d };
+            var node = {
+                id: d,
+                label: d,
+                x: 0,
+                y: 0,
+                size: Math.random(),
+                color: '#666'
+            };
 
             nodesByDomain.set(d, node);
-            nodes.push(node);
+            g.graph.addNode(node);
         }
 
-        edges.push({
+        g.graph.addEdge({
+            id: domain + d,
             source: nodesByDomain.get(domain),
-            target: nodesByDomain.get(d)
+            target: nodesByDomain.get(d),
+            size: Math.random(),
+            color: '#666'
         });
     });
-
-    graphViz.updateGraph(nodes, edges);
 });
 
-
+g.startForceAtlas2();
