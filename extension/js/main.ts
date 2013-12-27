@@ -1,6 +1,7 @@
 "use strict";
 
 declare var graphViz;
+declare var Crawler;
 var nodesByUrl = new Map<string, Object>();
 var nodesByDomain = new Map<string, Object>();
 
