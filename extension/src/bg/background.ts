@@ -9,10 +9,12 @@ chrome.browserAction.onClicked.addListener(tab => {
   });
 });
 
-chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+chrome.runtime.onMessage.addListener((message, sender) => {
     if (!('action' in message) || message.action !== 'crawl'){
-	return;
+	    return;
     }
 
-    c.getLinks(message.url, sendResponse);
+    c.getLinks(message.url, function(links){
+        chrome.runtime.sendMessage({ action: 'links', url: message.url, links: links });
+    });
 });
