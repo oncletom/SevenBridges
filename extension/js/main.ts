@@ -2,6 +2,7 @@
 
 declare var graphViz;
 var nodesByUrl = new Map<string, Object>();
+var nodesByDomain = new Map<string, Object>();
 
 document.addEventListener('DOMContentLoaded', e => {
 
@@ -14,8 +15,11 @@ document.addEventListener('DOMContentLoaded', e => {
       var nodes = [];
 
       xhr.response.forEach(url => {
-          var node = { label: url };
+          var node = { label: Crawler.getUrlDomain(url) };
+
           nodesByUrl.set(url, node);
+          nodesByDomain.set(Crawler.getUrlDomain(url), node);
+
           nodes.push(node);
 
           chrome.runtime.sendMessage({ action: 'crawl', url: url });
@@ -48,6 +52,33 @@ chrome.runtime.onMessage.addListener((message, sender) => {
         edges.push({
             source: nodesByUrl.get(url),
             target: nodesByUrl.get(l)
+        });
+    });
+
+    graphViz.updateGraph(nodes, edges);
+});
+
+chrome.runtime.onMessage.addListener((message, sender) => {
+    if (message.action !== 'domains') {
+        return;
+    }
+
+    var domains = message.domains;
+    var domain = Crawler.getUrlDomain(message.url);
+    var edges = [];
+    var nodes = [];
+
+    domains.forEach(d => {
+        if (!nodesByDomain.has(d)){
+            var node = { label: d };
+
+            nodesByDomain.set(d, node);
+            nodes.push(node);
+        }
+
+        edges.push({
+            source: nodesByDomain.get(domain),
+            target: nodesByDomain.get(d)
         });
     });
 

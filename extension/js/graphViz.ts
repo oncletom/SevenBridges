@@ -8,13 +8,13 @@ declare var ScreenTreeNode;
   document.addEventListener('DOMContentLoaded', e => {
     var width = 1300,
         height = 700;
-  
+
     var fill = d3.scale.category20();
 
     var force = d3.layout.force()
         .size([width, height])
         .nodes([])
-        .linkDistance(30)
+        .linkDistance(160)
         .charge(-60)
         .on("tick", tick);
 
@@ -161,7 +161,7 @@ declare var ScreenTreeNode;
     restart();
     //});
 
-    
+
 
     function getGraphBSPPoints(){
         // create a BSP node per edge
@@ -169,14 +169,7 @@ declare var ScreenTreeNode;
 
         //console.log('links', links);
 
-        return links.map(l => {
-            return {
-                x: (l.source.x+ l.target.x)/2,
-                y: (l.source.y+ l.target.y)/2,
-                label: (<any>l).label,
-                linkObj: l
-            }
-        }).filter((p, i, points) => { // removing duplicates // TODO this is a square algorithm. Improve
+        return nodes/*.filter((p, i, points) => { // removing duplicates // TODO this is a square algorithm. Improve
             var dup = false;
             points.some((p2, j) => { // square algorithm :-s
                 if(j >= i)
@@ -192,7 +185,7 @@ declare var ScreenTreeNode;
             });
 
             return !dup;
-        });
+        });*/
 
     }
 
@@ -235,7 +228,7 @@ declare var ScreenTreeNode;
 
 
 
-    var linkToLabel = new WeakMap();
+    var nodeToLabel = new WeakMap();
 
     function displayCloseLabels(e){
         var rect = svg[0][0].querySelector('rect').getBoundingClientRect();
@@ -262,7 +255,7 @@ declare var ScreenTreeNode;
 
         objs.forEach(function(o){
 
-            if(!linkToLabel.get(o.linkObj)){
+            if(!nodeToLabel.get(o)){
                 var text = g.append('text')
                     .attr('class', 'label')
                     .attr("x", o.x)
@@ -270,11 +263,11 @@ declare var ScreenTreeNode;
                     .attr("text-anchor", "middle")
                     .text(o.label);
                 //.text(o.getAttribute('title'));
-                linkToLabel.set(o.linkObj, text);
+                nodeToLabel.set(o, text);
 
                 setTimeout(function(){
                     text.remove();
-                    linkToLabel.delete(o.linkObj);
+                    nodeToLabel.delete(o);
                 }, 3000);
             }
             else{
@@ -356,5 +349,5 @@ declare var ScreenTreeNode;
     };
 
   });
-  
+
 })(this);

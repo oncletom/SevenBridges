@@ -1,5 +1,6 @@
 "use strict";
 var nodesByUrl = new Map();
+var nodesByDomain = new Map();
 
 document.addEventListener('DOMContentLoaded', function (e) {
     console.log('graphViz loaded?', typeof graphViz.updateGraph === "function");
@@ -11,8 +12,11 @@ document.addEventListener('DOMContentLoaded', function (e) {
         var nodes = [];
 
         xhr.response.forEach(function (url) {
-            var node = { label: url };
+            var node = { label: Crawler.getUrlDomain(url) };
+
             nodesByUrl.set(url, node);
+            nodesByDomain.set(Crawler.getUrlDomain(url), node);
+
             nodes.push(node);
 
             chrome.runtime.sendMessage({ action: 'crawl', url: url });
@@ -45,6 +49,33 @@ chrome.runtime.onMessage.addListener(function (message, sender) {
         edges.push({
             source: nodesByUrl.get(url),
             target: nodesByUrl.get(l)
+        });
+    });
+
+    graphViz.updateGraph(nodes, edges);
+});
+
+chrome.runtime.onMessage.addListener(function (message, sender) {
+    if (message.action !== 'domains') {
+        return;
+    }
+
+    var domains = message.domains;
+    var domain = Crawler.getUrlDomain(message.url);
+    var edges = [];
+    var nodes = [];
+
+    domains.forEach(function (d) {
+        if (!nodesByDomain.has(d)) {
+            var node = { label: d };
+
+            nodesByDomain.set(d, node);
+            nodes.push(node);
+        }
+
+        edges.push({
+            source: nodesByDomain.get(domain),
+            target: nodesByDomain.get(d)
         });
     });
 
