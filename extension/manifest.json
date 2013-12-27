@@ -1,9 +1,9 @@
 {
-  "name": "CHANGE THIS : Extension boilerplate",
+  "name": "Seven Bridges",
   "version": "0.0.1",
   "manifest_version": 2,
-  "description": "This extension was created with the awesome extensionizr.io",
-  "homepage_url": "http://extensionizr.com",
+  "description": "A graph",
+  "homepage_url": "https://github.com/DavidBruant/SevenBridges",
   "icons": {
     "16": "icons/icon16.png",
     "48": "icons/icon48.png",
@@ -18,12 +18,11 @@
   },
   "browser_action": {
     "default_icon": "icons/icon19.png",
-    "default_title": "browser action demo",
-    "default_popup": "src/browser_action/browser_action.html"
+    "default_title": "browser action demo"
   },
   "permissions": [
     "tabs",
     "https://*/* ",
-    " http://google.com/*"
+    "http://google.com/*"
   ]
 }
